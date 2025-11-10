@@ -24,11 +24,47 @@ endif()
 
 # Our Project
 
-add_executable(${PROJECT_NAME} main.c
-        jogador.c
-        jogador.h)
+add_executable(${PROJECT_NAME} WIN32 main.c
+        nucleo/definicoes.h
+        game/mapa/mapa.c
+        game/mapa/mapa.h
+        game/mapa/avancanivel.c
+        game/mapa/avancanivel.h
+        graficos/render.c
+        graficos/render.h
+        input/processarEntrada.c
+        input/processarEntrada.h
+        nucleo/startup.c
+        nucleo/startup.h
+        nucleo/placar.c
+        nucleo/placar.h
+        game/monstro/monstro.h
+        game/monstro/monstro.c
+        nucleo/logica.c
+        nucleo/logica.h
+        ui/ui.c
+        ui/ui.h
+        game/jogador/jogador.c
+        game/jogador/jogador.h
+        game/jogador/espada.c
+        game/jogador/espada.h
+        graficos/antirender.c
+        graficos/antirender.h
+        EDS/Trabalho_EDS.cpp
+        EDS/Trabalho_EDS.h
+        EDS/Trabalho_EDS.cpp)
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
+
+# Adicionar diretórios de include
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/nucleo
+    ${CMAKE_CURRENT_SOURCE_DIR}/game
+    ${CMAKE_CURRENT_SOURCE_DIR}/graficos
+    ${CMAKE_CURRENT_SOURCE_DIR}/input
+    ${CMAKE_CURRENT_SOURCE_DIR}/ui
+)
 
 # Web Configurations
 if (${PLATFORM} STREQUAL "Web")

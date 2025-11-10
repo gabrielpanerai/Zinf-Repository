@@ -1,62 +1,37 @@
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "raylib.h"
-
-#define LARGURA 1200
-#define ALTURA 860
-#define CASA 50
-
+#include "nucleo/definicoes.h"
+#include "nucleo/startup.h"
+#include "graficos/render.h"
+#include "input/processarEntrada.h"
+#include "nucleo/logica.h"
+#include "antirender.h"
 
 int main() {
-    Rectangle jogador = { 300, 300, CASA, CASA }; // x, y, width, height
-    Rectangle parede = { 600, 600, CASA, CASA }; // x, y, width, height
+	Jogo zinf;
 
-    InitWindow(LARGURA, ALTURA, "Teclas"); //Inicializa janela, com certo tamanho e titulo
-    SetWindowTitle("Quadrado"); // Define o título da janela
-    SetTargetFPS(60);// Ajusta a janela para 60 frames por segundo
+	InitWindow(LARGURA, ALTURA, "Morde & Assopra"); // Inicializa janela, com certo tamanho e titulo
+	SetTargetFPS(60);// Ajusta a janela para 60 frames por segundo
 
-    //Este laco repete enquanto a janela nao for fechada
-    //Utilizamos ele para atualizar o estado do programa / jogo
-    while (!WindowShouldClose()) {
-            Rectangle proximaPosJogador = jogador;
+	/* Inicializa a nossa estrutura principal, carregando o mapa, texturas
+	 * e as outras estruturas auxiliares (jogador, monstros, etc.) */
+	Inicializar(&zinf);
 
-        // Processamento de entrada
-        if (IsKeyPressed(KEY_RIGHT)) { //Mexe o quadrado para direita quando a seta direita for pressionada
-                proximaPosJogador.x += CASA;
-                if (!CheckCollisionRecs(proximaPosJogador, parede))
-                        jogador.x += CASA;
-                proximaPosJogador.x = jogador.x;
-        }
+	/* O LOOP PRINCIPAL: Enquanto a janela estiver aberta, todas as operações do programa são executadas sequencialmente
+	 * pelas três funções principais que gerenciam entrada, processamento e renderização, nessa ordem. */
+	while (!WindowShouldClose()) {
 
-        if (IsKeyPressed(KEY_LEFT)) { //Mexe o quadrado para esquerda quando a seta esquerda for pressionada
-                proximaPosJogador.x -= CASA;
-                if (!CheckCollisionRecs(proximaPosJogador, parede))
-                        jogador.x -= CASA;
-                proximaPosJogador.x = jogador.x;
-        }
+		processarEntrada(&zinf); // Comandos de entrada
 
-        if (IsKeyPressed(KEY_UP)) { //Mexe o quadrado para cima quando a seta para cima for pressionada
-                proximaPosJogador.y -= CASA;
-                if (!CheckCollisionRecs(proximaPosJogador, parede))
-                        jogador.y -= CASA;
-                proximaPosJogador.y = jogador.y;
-        }
+		processarLogica(&zinf); // Processamento lógico
 
-        if (IsKeyPressed(KEY_DOWN)) { //Mexe o quadrado para baixo quando a seta para baixo for pressionada
-                proximaPosJogador.y += CASA;
-                if (!CheckCollisionRecs(proximaPosJogador, parede))
-                        jogador.y += CASA;
-                proximaPosJogador.y = jogador.y;
-        }
+		desenhaJogo(&zinf); // Gráficos (raylib)
 
-    	// Atualiza o que eh mostrado na tela a partir do estado do jogo
-    	BeginDrawing(); //Inicia o ambiente de desenho na tela
-    	ClearBackground(RAYWHITE); //Limpa a tela e define cor de fundo
-        DrawRectangleRec(jogador, GREEN); // Desenha o retângulo na posição atual
-        DrawRectangleRec(parede, RED); // Desenha outro quadrado
-	EndDrawing(); //Finaliza o ambiente de desenho na tela
-    }
+	}
 
-    CloseWindow(); // Fecha a janela
-    return 0;
-    }
+	descarregarTexturas(&zinf); // Libera as texturas carregadas
+	CloseWindow(); // Fecha a janela
+	return 0;
+	}
